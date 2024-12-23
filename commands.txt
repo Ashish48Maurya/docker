@@ -1,0 +1,5 @@
+docker compose up -d: Start your app in the background.
+docker compose down: Stop and clean up everything.
+docker build -t image_Name directory: Create a custom Docker image from your project.
+
+significance of -d : This allows you to continue using your terminal for other commands or tasks while the containers are running in the background.

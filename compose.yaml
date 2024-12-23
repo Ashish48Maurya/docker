@@ -1,0 +1,61 @@
+version: '3.8'
+name: dockertut
+services:
+  #nodeapp is not required because -> 
+  # The backend service already contains everything needed to run your Node.js application. It has Node.js, your code, and any dependencies.
+  # The nodeapp service is redundant because it seems to serve no additional purpose—your backend service can directly connect to MongoDB and perform all the operations.
+  nodeapp:
+    image: node
+    container_name: sample_node
+    env_file:
+      - .env
+    # OR
+    # environment:
+    #   - PORT=4000
+    ports:
+      - 5000:4000
+    depends_on:
+      - mongodb
+
+
+
+  mongodb:
+    image: mongo
+    container_name: sample_mongo 
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password0
+    
+
+
+  # ⬇️ custom image (user defined image) rest 2 ⬆️ are docker images
+  frontend:
+    image: nextjs_client
+    env_file:
+      - .env.local
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+      # context : directory where the Dockerfile of your custom image(node_backend in this case) is present
+    image: node_backend
+    # env_file:
+    #   - .env
+    environment:
+      - PORT=4000
+    ports:
+      - 8000:4000
+    # environment: - PORT=4000: Tells the app inside the container to listen on port 4000.
+    # ports: - 8000:4000: Maps the host machine's 8000 to the container's 4000.
+    depends_on:
+      - mongodb
